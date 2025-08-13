@@ -55,6 +55,23 @@ template <typename T> inline void merge_sort(T *arr, size_t n) noexcept
         delete[] R;
     };
 
+
     internal_sort(internal_sort, arr, n);
+}
+
+template <typename T> inline void bubble_sort(T *arr, size_t n) noexcept
+{
+    for (size_t i = 0; i < n - 1; i++)
+    {
+        for (size_t j = 0; j < n - 1 - i; j++)
+        {
+            if (arr[j] > arr[j + 1])
+            {
+                T temp = arr[j + 1];
+                arr[j + 1] = arr[j];
+                arr[j] = temp;
+            }
+        }
+    }
 }
 } // namespace cstl
