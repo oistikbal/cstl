@@ -4,12 +4,20 @@
 
 namespace cstl
 {
+
+template <typename T> inline void swap(T &a, T &b) noexcept
+{
+    T temp = a;
+    a = b;
+    b = temp;
+}
+
 template <typename T> inline void insertion_sort(T *arr, size_t n) noexcept
 {
     for (size_t i = 1; i < n; i++)
     {
         T key = arr[i];
-        int64_t j = i - 1;
+        size_t j = i - 1;
         while (j >= 0 && arr[j] > key)
         {
             arr[j + 1] = arr[j];
@@ -108,5 +116,35 @@ template <typename T> inline void heap_sort(T *arr, size_t n) noexcept
 
         heapify(heapify, arr, heap_size - 1, 0);
     }
+}
+
+template <typename T> inline void quick_sort(T *arr, size_t n) noexcept
+{
+    auto partition = [](T *arr, size_t low, size_t high) noexcept -> size_t {
+        T pivot = arr[high];
+        size_t i = low - 1;
+
+        for (size_t j = low; j < high; j++)
+        {
+            if (arr[j] < pivot)
+            {
+                i++;
+                swap(arr[i], arr[j]);
+            }
+        }
+        swap(arr[i + 1], arr[high]);
+        return i + 1;
+    };
+
+    auto quick_sort_rec = [&](auto &&self, T *arr, size_t low, size_t high) noexcept -> void {
+        if (low < high)
+        {
+            size_t pi = partition(arr, low, high);
+            self(self, arr, low, pi - 1);
+            self(self, arr, pi + 1, high);
+        }
+    };
+
+    quick_sort_rec(quick_sort_rec, arr, 0, n - 1);
 }
 } // namespace cstl
