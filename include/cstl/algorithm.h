@@ -17,7 +17,7 @@ template <typename T> inline void insertion_sort(T *arr, size_t n) noexcept
     for (size_t i = 1; i < n; i++)
     {
         T key = arr[i];
-        size_t j = i - 1;
+        int64_t j = i - 1;
         while (j >= 0 && arr[j] > key)
         {
             arr[j + 1] = arr[j];
@@ -74,9 +74,7 @@ template <typename T> inline void bubble_sort(T *arr, size_t n) noexcept
         {
             if (arr[j] > arr[j + 1])
             {
-                T temp = arr[j + 1];
-                arr[j + 1] = arr[j];
-                arr[j] = temp;
+                swap(arr[j], arr[j + 1]);
             }
         }
     }
@@ -96,9 +94,7 @@ template <typename T> inline void heap_sort(T *arr, size_t n) noexcept
 
         if (largest != i)
         {
-            T temp = arr[i];
-            arr[i] = arr[largest];
-            arr[largest] = temp;
+            swap(arr[i], arr[largest]);
             self(self, arr, heap_size, largest);
         }
     };
@@ -110,10 +106,7 @@ template <typename T> inline void heap_sort(T *arr, size_t n) noexcept
 
     for (size_t heap_size = n; heap_size > 1; --heap_size)
     {
-        T temp = arr[0];
-        arr[0] = arr[heap_size - 1];
-        arr[heap_size - 1] = temp;
-
+        swap(arr[heap_size - 1], arr[0]);
         heapify(heapify, arr, heap_size - 1, 0);
     }
 }
@@ -122,7 +115,7 @@ template <typename T> inline void quick_sort(T *arr, size_t n) noexcept
 {
     auto partition = [](T *arr, size_t low, size_t high) noexcept -> size_t {
         T pivot = arr[high];
-        size_t i = low - 1;
+        int64_t i = low - 1;
 
         for (size_t j = low; j < high; j++)
         {
