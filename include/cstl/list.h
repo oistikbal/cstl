@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstl/common.h>
+
 namespace cstl
 {
 template <typename T> class list
