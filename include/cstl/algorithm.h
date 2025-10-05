@@ -5,7 +5,7 @@
 namespace cstl
 {
 
-template <typename T> inline void swap(T &a, T &b) noexcept
+template <typename T> inline constexpr void swap(T &a, T &b) noexcept
 {
     T temp = a;
     a = b;
