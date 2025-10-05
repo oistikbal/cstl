@@ -12,7 +12,6 @@ template <typename T> class vector
         reserve(count);
         for (size_t i = 0; i < count; ++i)
             new (m_data + i) T();
-        m_size = count;
     }
 
     ~vector()
