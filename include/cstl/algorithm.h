@@ -5,11 +5,13 @@
 namespace cstl
 {
 
-template <typename T> inline constexpr void swap(T &a, T &b) noexcept
+template <typename T>
+constexpr void swap(T &a, T &b) noexcept(noexcept(T(cstl::move(a))) && noexcept(a = cstl::move(b)) &&
+                                         noexcept(b = cstl::move(a)))
 {
-    T temp = a;
-    a = b;
-    b = temp;
+    T temp = cstl::move(a);
+    a = cstl::move(b);
+    b = cstl::move(temp);
 }
 
 template <typename T> inline void insertion_sort(T *arr, size_t n) noexcept

@@ -29,13 +29,13 @@ template <typename T> class list
         node *new_node = new node(value);
         if (m_tail)
         {
-            m_tail->next = node;
+            m_tail->next = new_node;
             new_node->prev = m_tail;
-            m_tail = node;
+            m_tail = new_node;
         }
         else
         {
-            m_head = m_tail = node;
+            m_head = m_tail = new_node;
         }
         ++m_size;
     }
