@@ -112,7 +112,7 @@ private:
 
         for (size_t i = 0; i < m_size; ++i)
         {
-            new_data[i] = static_cast<T &&>(m_data[(m_head + i) % m_capacity]);
+            new_data[i] = cstl::move(m_data[(m_head + i) % m_capacity]);
         }
 
         delete[] m_data;

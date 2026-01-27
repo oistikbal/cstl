@@ -119,7 +119,7 @@ template <typename T> class vector
         T *new_data = static_cast<T *>(::operator new(sizeof(T) * new_cap));
         for (size_t i = 0; i < m_size; ++i)
         {
-            new (new_data + i) T(static_cast<T &&>(m_data[i]));
+            new (new_data + i) T(cstl::move(m_data[i]));
             m_data[i].~T();
         }
         ::operator delete(m_data);
