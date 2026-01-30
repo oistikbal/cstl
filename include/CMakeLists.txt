@@ -5,13 +5,11 @@ target_include_directories(cstl INTERFACE
     $<INSTALL_INTERFACE:include>
 )
 
-#
-#source_group(
-#    TREE "${CMAKE_CURRENT_SOURCE_DIR}"
-#   PREFIX "Header Files"
-#    FILES ${CSTL_HEADERS}
-#)
+file(GLOB_RECURSE CSTL_LIB_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp")
 
+target_sources(cstl INTERFACE 
+    $<BUILD_INTERFACE:${CSTL_LIB_HEADERS}>
+)
 
 set_target_properties(cstl PROPERTIES CXX_STANDARD 20)
 set_target_properties(cstl PROPERTIES CXX_STANDARD_REQUIRED True)
