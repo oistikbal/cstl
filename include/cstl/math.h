@@ -3,6 +3,8 @@
 #include <smmintrin.h>
 #include <xmmintrin.h>
 
+#define VECTOR_CALL __vectorcall
+
 namespace cstl
 {
 
@@ -10,9 +12,14 @@ constexpr float pi = 3.141592654f;
 constexpr float rad_to_deg = 180.0f / pi;
 constexpr float deg_to_rad = pi / 180.0f;
 
+
 using vector3 = __m128;
 using vector4 = __m128;
 
+inline float sqrt(float x)
+{
+    return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(x)));
+}
 
 struct alignas(16) float3
 {
@@ -34,45 +41,54 @@ struct alignas(16) float3
 };
 
 static_assert(sizeof(float3) == 16, "Size of float3 must be 16");
+static_assert(alignof(float3) == 16, "Align of float3 must be 16");
 
-inline float sqrt(float x)
+
+inline vector3 VECTOR_CALL vector3_get(const float3& f)
 {
-    return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(x)));
+    return _mm_load_ps(reinterpret_cast<const float *>(&f));
 }
 
-inline float3 float3_get(const vector3 &v)
+inline vector3 VECTOR_CALL vector3_dot(const vector3 v1, const vector3 v2)
+{
+    return _mm_dp_ps(v1, v2, 0x71);
+}
+
+inline vector3 VECTOR_CALL vector3_normal(const vector3 v)
+{
+    vector3 dot = _mm_dp_ps(v, v, 0x71);
+
+    vector3 inv_l = _mm_rsqrt_ps(dot);
+
+    return _mm_mul_ps(v, inv_l);
+}
+
+inline vector3 VECTOR_CALL vector3_length(const vector3 v)
+{
+    return vector3_dot(v,v);
+}
+
+inline float3 VECTOR_CALL float3_get(const vector3 v)
 {
     float3 f;
     _mm_store_ps(reinterpret_cast<float *>(&f), v);
     return f;
 }
 
-inline vector3 vector3_get(const float3 &f)
+inline float float3_length(const float3& f)
 {
-    return _mm_load_ps(reinterpret_cast<const float *>(&f));
+    vector3 length = vector3_length(vector3_get(f));
+    return _mm_cvtss_f32(length);
 }
 
-inline float vector3_dot(const vector3 &v1, const vector3 &v2)
+inline float3 float3_normal(const float3& f)
 {
-    return _mm_cvtss_f32(_mm_dp_ps(v1, v2, 0x77));
+    return float3_get(vector3_normal(vector3_get(f)));
 }
 
-inline float float3_length(const float3 &f)
+inline float float3_dot(const float3& f1, const float3& f2)
 {
-    return sqrt(f.x * f.x + f.y * f.y + f.z * f.z);
+    vector3 dot = vector3_dot(vector3_get(f1), vector3_get(f2));
+    return _mm_cvtss_f32(dot);
 }
-
-inline float3 float3_normal(const float3 &f)
-{
-    float inv_l = _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(f.x * f.x + f.y * f.y + f.z * f.z)));
-
-    return float3(f.x * inv_l, f.y * inv_l, f.z * inv_l);
-}
-
-inline float float3_dot(const float3 &f1, const float3 &f2)
-{
-    return vector3_dot(vector3_get(f1), vector3_get(f2));
-}
-
-
 } // namespace cstl
